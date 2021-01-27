@@ -24,7 +24,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Sopamo\\LaravelFilepond\\": "src/"
+      "rootcause0\\LaravelFilepond\\": "src/"
     }
   },
   "extra": {
