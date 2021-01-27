@@ -31,7 +31,10 @@ class FilepondController extends BaseController
      */
     public function upload(Request $request)
     {
-        $input = $request->file(config('filepond.input_name'));
+        $input = array();
+        foreach($request->file as $file){
+            array_push($input,$file);
+        }
 
         if ($input === null) {
             return Response::make(config('filepond.input_name') . ' is required', 422, [
@@ -39,12 +42,12 @@ class FilepondController extends BaseController
             ]);
         }
 
-        $files = $input;
         $path = config('filepond.temporary_files_path', 'filepond');
         $disk = config('filepond.temporary_files_disk', 'local');
-        foreach($files as $file)
+        foreach($input as $file)
 		{
-        if (! ($newFile = $file->storeAs($path . DIRECTORY_SEPARATOR . Str::random(), $file->getClientOriginalName(), $disk))) {
+        if (! ($newFile = $file->storeAs($path . DIRECTORY_SEPARATOR . Str::random(), $file->getClientOriginalName(), $disk)))
+        {
             return Response::make('Could not save file', 500, [
                 'Content-Type' => 'text/plain',
             ]);

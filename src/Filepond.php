@@ -33,7 +33,10 @@ class Filepond
         $filePath = array();
         foreach($serverId as $serverI)
         {
-           array_push($filePath,Crypt::decryptString($serverI));
+           if(!is_null($serverI))
+           {
+               array_push($filePath, Crypt::decryptString($serverI));
+           }
         }
         return $filePath;
     }
