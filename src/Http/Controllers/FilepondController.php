@@ -39,16 +39,17 @@ class FilepondController extends BaseController
             ]);
         }
 
-        $file = is_array($input) ? $input[0] : $input;
+        $files = $input;
         $path = config('filepond.temporary_files_path', 'filepond');
         $disk = config('filepond.temporary_files_disk', 'local');
-
+        foreach($files as $file)
+		{
         if (! ($newFile = $file->storeAs($path . DIRECTORY_SEPARATOR . Str::random(), $file->getClientOriginalName(), $disk))) {
             return Response::make('Could not save file', 500, [
                 'Content-Type' => 'text/plain',
             ]);
-        }
-
+         }
+	    }
         return Response::make($this->filepond->getServerIdFromPath(Storage::disk($disk)->path($newFile)), 200, [
             'Content-Type' => 'text/plain',
         ]);
