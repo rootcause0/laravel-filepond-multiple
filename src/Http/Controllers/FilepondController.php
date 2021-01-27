@@ -1,13 +1,13 @@
 <?php
 
-namespace Sopamo\LaravelFilepond\Http\Controllers;
+namespace rootcause0\LaravelFilepond\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Sopamo\LaravelFilepond\Filepond;
+use rootcause0\LaravelFilepond\Filepond;
 
 class FilepondController extends BaseController
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sopamo\LaravelFilepond\Exceptions;
+namespace rootcause0\LaravelFilepond\Exceptions;
 
 class InvalidPathException extends \InvalidArgumentException implements LaravelFilepondException
 {
