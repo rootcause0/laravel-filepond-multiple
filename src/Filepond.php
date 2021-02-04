@@ -33,7 +33,7 @@ class Filepond
         $filePath = array();
         foreach($serverId as $serverI)
         {
-           if(!is_null($serverI))
+           if(!is_null($serverI) && !str_contains($serverI,'://'))       //Protocol Identifier vasıtasıyla dosyamızın pre-load olup olmadığını kontrol ediyoruz.
            {
                array_push($filePath, Crypt::decryptString($serverI));
            }

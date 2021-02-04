@@ -2,6 +2,7 @@
 
 namespace rootcause0\LaravelFilepond\Http\Controllers;
 
+use App\Models\UnitAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Response;
@@ -31,20 +32,32 @@ class FilepondController extends BaseController
      */
     public function upload(Request $request)
     {
-        $input = array();
-        foreach($request->file as $file){
-            array_push($input,$file);
+        $damaged_photo = array();
+        $odometer_photo = array();
+        $interior_photo = array();
+
+        if(isset($request->damaged_photo)) {
+            foreach ($request->damaged_photo as $file) {
+                array_push($damaged_photo, $file);
+            }
+        }
+        if(isset($request->odometer_photo)) {
+            foreach ($request->odometer_photo as $file) {
+                array_push($odometer_photo, $file);
+            }
+        }
+        if(isset($request->interior_photo)) {
+            foreach ($request->interior_photo as $file) {
+                array_push($interior_photo, $file);
+            }
         }
 
-        if ($input === null) {
-            return Response::make(config('filepond.input_name') . ' is required', 422, [
-                'Content-Type' => 'text/plain',
-            ]);
-        }
+
+
 
         $path = config('filepond.temporary_files_path', 'filepond');
         $disk = config('filepond.temporary_files_disk', 'local');
-        foreach($input as $file)
+        foreach($damaged_photo as $file)
 		{
         if (! ($newFile = $file->storeAs($path . DIRECTORY_SEPARATOR . Str::random(), $file->getClientOriginalName(), $disk)))
         {
@@ -53,6 +66,24 @@ class FilepondController extends BaseController
             ]);
          }
 	    }
+        foreach($odometer_photo as $file)
+        {
+            if (! ($newFile = $file->storeAs($path . DIRECTORY_SEPARATOR . Str::random(), $file->getClientOriginalName(), $disk)))
+            {
+                return Response::make('Could not save file', 500, [
+                    'Content-Type' => 'text/plain',
+                ]);
+            }
+        }
+        foreach($interior_photo as $file)
+        {
+            if (! ($newFile = $file->storeAs($path . DIRECTORY_SEPARATOR . Str::random(), $file->getClientOriginalName(), $disk)))
+            {
+                return Response::make('Could not save file', 500, [
+                    'Content-Type' => 'text/plain',
+                ]);
+            }
+        }
         return Response::make($this->filepond->getServerIdFromPath(Storage::disk($disk)->path($newFile)), 200, [
             'Content-Type' => 'text/plain',
         ]);
@@ -68,12 +99,16 @@ class FilepondController extends BaseController
      */
     public function delete(Request $request)
     {
-        $filePath = $this->filepond->getPathFromServerId($request->getContent());
-        if (Storage::disk(config('filepond.temporary_files_disk', 'local'))->delete($filePath)) {
+
+        $seperateUrl = explode('/',$request->source);
+        $onlyFileName = end($seperateUrl);
+        UnitAttachment::where('path', 'LIKE', '%'.$onlyFileName.'%')->delete();
+        if (unlink(storage_path('\app\public\admission\\'.$onlyFileName)))
+         {
             return Response::make('', 200, [
                 'Content-Type' => 'text/plain',
             ]);
-        }
+         }
 
         return Response::make('', 500, [
             'Content-Type' => 'text/plain',
